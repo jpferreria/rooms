@@ -16,9 +16,10 @@ You are **Crunch-Man**, trapped inside glowing neon rooms! Navigate the looping 
 
 ## 2. Installation and Quick Start
 
-### Step 1: Navigate to the Project Directory
+### Step 1: Clone the Repository and Navigate to the Directory
 ```bash
-cd /Users/jerry/Documents/antigravity/rooms
+git clone https://github.com/jpferreria/rooms.git
+cd rooms
 ```
 
 ### Step 2: Install Node Dependencies
