@@ -1,0 +1,21 @@
+{
+  "name": "boom-fps",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "server": "node server.js",
+    "start": "./start.sh",
+    "stop": "./stop.sh"
+  },
+  "dependencies": {
+    "three": "^0.160.0",
+    "ws": "^8.16.0"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}

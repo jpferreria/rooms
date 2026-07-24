@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ROOMS! // Crunch-Man Retro FPS</title>
+  <meta name="description" content="A web-based retro Pac-Man style first-person shooter. Crunch cookies, dodge ghosts, and power up.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
+  <!-- CRT Screen overlay (scanlines and curve shadow) -->
+  <div id="crt-overlay"></div>
+
+  <!-- Three.js Canvas Container -->
+  <div id="canvas-container"></div>
+
+  <!-- Game Main Menu / Pointer Lock Blocker -->
+  <div id="menu-container">
+    <div class="menu-content glass">
+      <h1 class="logo">ROOMS!</h1>
+      <p class="subtitle">// RETRO-MODERN CRUNCH-MAN MAZE SIMULATION ENGINE //</p>
+      
+      <div class="menu-info">
+        <div class="info-section">
+          <h3>CONTROLS</h3>
+          <ul>
+            <li><span class="key">W</span><span class="key">A</span><span class="key">S</span><span class="key">D</span> Move</li>
+            <li><span class="key">MOUSE</span> Look</li>
+            <li><span class="key">LEFT CLICK</span> Fast Chomp / Bite</li>
+            <li><span class="key">ESC</span> Pause</li>
+          </ul>
+        </div>
+        <div class="info-section">
+          <h3>OBJECTIVE</h3>
+          <p>You are CRUNCH-MAN. Eat all floating cookies in the maze to secure the teleporter link! Avoid the ghosts. Consume blinking power-up cookies at the corners to reverse roles and eat the ghosts for bonus points!</p>
+        </div>
+      </div>
+
+      <!-- Multiplayer controls -->
+      <div class="lobby-setup">
+        <label for="username-input" class="lobby-label">OPERATOR CALLSIGN:</label>
+        <input type="text" id="username-input" maxlength="15" placeholder="CRUNCH-MAN" class="lobby-input" value="CRUNCH-MAN">
+        <div id="connection-status" class="lobby-status">// AUTODETECTED LOBBY LINK: READY //</div>
+      </div>
+
+      <button id="start-btn" class="glow-btn">INITIALIZE SYSTEM</button>
+    </div>
+  </div>
+
+  <!-- HUD Interface -->
+  <div id="hud-container" class="hidden">
+    <!-- Crosshair -->
+    <div id="crosshair">
+      <div class="crosshair-ring"></div>
+      <div class="crosshair-dot"></div>
+      <div class="crosshair-target"></div>
+    </div>
+
+    <!-- Top Left: Maze Minimap -->
+    <div id="radar-panel" class="hud-panel glass">
+      <div class="panel-header">MAZE MINIMAP</div>
+      <div class="radar-scope" style="border-radius: 4px; border: 1px solid rgba(0, 255, 255, 0.2); background: #020617; overflow: hidden;">
+        <canvas id="maze-canvas" width="144" height="144" style="display: block; width: 144px; height: 144px; image-rendering: pixelated;"></canvas>
+      </div>
+      <div id="level-display" class="panel-footer">SECTOR 01</div>
+    </div>
+
+    <!-- Bottom Left: Lives & Status -->
+    <div id="status-panel" class="hud-panel glass">
+      <div class="panel-header">CRUNCH-MAN STATUS</div>
+      <div class="status-content">
+        <div class="vital-stats">
+          <div class="stat-group">
+            <span class="label">PULSE</span>
+            <span id="bpm-value" class="value text-green animate-pulse">80</span>
+          </div>
+          <div class="stat-group">
+            <span class="label">LIVES</span>
+            <span id="hp-value" class="value text-cyan">3</span>
+          </div>
+        </div>
+        
+        <!-- Animated Heartbeat SVG -->
+        <div class="ekg-container">
+          <svg viewBox="0 0 200 40" class="ekg-svg">
+            <path id="ekg-path" d="M0,20 L50,20 L60,5 L70,35 L80,20 L130,20 L140,5 L150,35 L160,20 L200,20" />
+          </svg>
+        </div>
+
+        <div class="bar-container">
+          <div class="bar-label">SCORE</div>
+          <div class="bar-track">
+            <div id="shield-bar" class="bar-fill bg-cyan" style="width: 0%;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Right: Power-Up Status -->
+    <div id="weapon-panel" class="hud-panel glass">
+      <div class="panel-header">POWER-UP STATUS</div>
+      <div class="weapon-content">
+        <div class="weapon-stats">
+          <div class="stat-group">
+            <span class="label">COOKIES</span>
+            <span id="temp-value" class="value text-orange">0/0</span>
+          </div>
+          <div class="stat-group">
+            <span class="label">POWER TIMER</span>
+            <span id="battery-value" class="value text-cyan">0s</span>
+          </div>
+        </div>
+
+        <div class="bar-container">
+          <div class="bar-label">POWER COOKIE DURATION</div>
+          <div class="bar-track">
+            <div id="heat-fill" class="bar-fill bg-orange" style="width: 0%;"></div>
+          </div>
+        </div>
+        
+        <div class="bar-container" style="display: none;">
+          <div class="bar-label">HIDDEN ACCELERATOR</div>
+          <div class="bar-track">
+            <div id="battery-fill" class="bar-fill bg-cyan" style="width: 100%;"></div>
+          </div>
+        </div>
+
+        <div id="weapon-alert" class="alert-box hidden">POWERED UP!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Level Notification overlay -->
+  <div id="level-overlay" class="notification hidden">
+    <div class="notification-content">
+      <h2 id="level-title">SECTOR 01</h2>
+      <p id="level-desc">MAZE SIMULATION INITIALIZED</p>
+    </div>
+  </div>
+
+  <!-- Game Over Screen -->
+  <div id="game-over-container" class="hidden">
+    <div class="menu-content glass border-red">
+      <h1 class="logo text-red animate-glitch" data-text="GAME OVER">GAME OVER</h1>
+      <p class="subtitle">// SUBJECT ELIMINATED BY THE GHOSTS //</p>
+      <button id="restart-btn" class="glow-btn btn-red">REBOOT SIMULATION</button>
+    </div>
+  </div>
+
+  <!-- Victory Screen -->
+  <div id="victory-container" class="hidden">
+    <div class="menu-content glass border-green">
+      <h1 class="logo text-green animate-glitch" data-text="VICTORY!">VICTORY!</h1>
+      <p class="subtitle">// ALL MAZE LEVELS CONQUERED //</p>
+      <button id="victory-btn" class="glow-btn btn-green">RESTART SIMULATION</button>
+    </div>
+  </div>
+
+  <!-- Damage Flash overlay -->
+  <div id="damage-flash"></div>
+  <!-- Healing Flash overlay -->
+  <div id="healing-flash"></div>
+
+  <!-- Scripts -->
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

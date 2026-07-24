@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.DS_Store
+*.log
+py_ai_client/__pycache__/
+py_ai_client/.ipynb_checkpoints/
+.system_generated/
+.gemini/
