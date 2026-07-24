@@ -1,141 +1,96 @@
-# BOOM! // Spectral Exterminator
+# Rooms! // Crunch-Man Retro FPS
 
-A retro-modern 3D First-Person Shooter built with Three.js, Vanilla CSS, and WebSockets. Exterminate spectral entities using a twisting additive electric neutrino stream, collect battery cores, play with friends in multiplayer lobby rooms, and automate training with Gymnasium RL agents or local LLMs (Gemma via Ollama).
+A retro-style browser-based 3D First-Person Shooter meets Pac-Man, built with Three.js, Vanilla CSS, WebSockets, and native Node.js unit tests.
+
+You are **Crunch-Man**, trapped inside glowing neon rooms! Navigate the looping 3D corridors, gobble down floating random-colored cookies, avoid the chasing ghosts, and consume powerful corner cookies to reverse roles and eat the ghosts for massive points.
 
 ---
 
 ## 1. System Requirements
 
-### Frontend & Backend Servers
-* **Node.js**: Version `18.0.0` or higher.
+* **Node.js**: Version `18.0.0` or higher (tested on Node `25.9.0`).
 * **NPM**: Version `9.0.0` or higher.
-* **Modern Browser**: Chrome, Safari, Edge, or Firefox supporting WebGL and Pointer Lock API.
-
-### AI Client Suite (Optional)
-* **Python**: Version `3.8` to `3.11` (recommended).
-* **Python Dependencies**: Listed in `py_ai_client/requirements.txt` (`websockets`, `requests`, `numpy`, `gymnasium`).
-* **Local LLM Engine (for Gemma operator)**: Ollama installed with the `gemma2:2b` model.
+* **Modern Web Browser**: Supporting WebGL, Web Audio, and the Pointer Lock API.
 
 ---
 
-## 2. Step-by-Step Setup Guide
+## 2. Installation and Quick Start
 
-### Step 1: Clone and Set Up Workspace
-Navigate to the root directory of the application:
+### Step 1: Navigate to the Project Directory
+```bash
+cd /Users/jerry/Documents/antigravity/rooms
+```
+
+### Step 2: Install Node Dependencies
 ```bash
 npm install
 ```
 
-### Step 2: Set Up Python AI Dependencies (Optional)
-If you wish to run the autonomous AI agents, Gymnasium wrappers, or Ollama clients:
-```bash
-cd py_ai_client
-python3 -m pip install -r requirements.txt --break-system-packages
-cd ..
-```
-
-### Step 3: Run the Game and Servers
-Run the unified startup script:
+### Step 3: Run the Game Server
+Execute the unified startup script:
 ```bash
 ./start.sh
-# OR
-npm start
 ```
-This launches:
-* **The Game Client** at `http://localhost:3000/`
+This script launches:
+* **The Client Assets Server** at `http://localhost:3000/`
 * **The WebSocket Lobby Server** on port `8080`
-* **The Telemetry REST API** on port `8001`
+* **The REST API Telemetry Interface** on port `8001`
 
-### Step 4: Run the AI Agents
-Open another terminal window, navigate to the project directory, and run any of the following bots:
-
-* **To run the autonomous Hunter Bot:**
-  ```bash
-  python3 py_ai_client/ai_agent.py
-  ```
-* **To run the Companion Bot (will spawn next to you and follow you around):**
-  ```bash
-  python3 py_ai_client/companion_agent.py
-  ```
-* **To run the Gemma/Ollama AI Agent (ensure Ollama is running first):**
-  ```bash
-  ollama run gemma2:2b
-  python3 py_ai_client/ollama_agent.py
-  ```
-
----
-
-## 3. Component Architecture
-
-```mermaid
-graph TD
-    subgraph Client Browser (Port 3000)
-        Main[main.js] --> Engine[GameEngine.js]
-        Engine --> Player[Player.js]
-        Engine --> Weapon[Weapon.js]
-        Engine --> Map[Map.js]
-        Engine --> Network[NetworkSystem.js]
-        Engine --> ConsoleAI[ConsoleAIApi.js]
-        Map --> MapData[MapData.js]
-    end
-
-    subgraph Backend Services
-        LobbyWS[server.js WebSocket Port 8080] <--> Network
-        TelemetryREST[server.js REST Port 8001] <--> ConsoleAI
-    end
-
-    subgraph Python AI Suite
-        AIAgent[ai_agent.py] <--> LobbyWS
-        CompanionAgent[companion_agent.py] <--> LobbyWS
-        CompanionAgent <--> TelemetryREST
-        OllamaAgent[ollama_agent.py] <--> TelemetryREST
-        OllamaAgent --> OllamaLocal[Ollama Service Port 11434]
-    end
+### Step 4: Run the Unit Tests
+To run the automated suite testing core collision-eating, flee/chase AI, respawn cooldowns, and lives logic:
+```bash
+npm test
+# OR
+node tests/game.test.js
 ```
 
-### Frontend Modules (`src/game/`)
-* **[GameEngine.js](file:///Users/jerry/Documents/antigravity/beautiful-bell/src/game/GameEngine.js):** The central conductor. Orchestrates the Three.js rendering pipeline, lighting, collision checks, particle physics, levels sync, and UI hooks.
-* **[Player.js](file:///Users/jerry/Documents/antigravity/beautiful-bell/src/game/Player.js):** Manages local player states (HP, Shield, coordinates, mouse orientation, and collisions against walls).
-* **[Weapon.js](file:///Users/jerry/Documents/antigravity/beautiful-bell/src/game/Weapon.js):** Simulates weapon physics. Manages battery charges, heat core values, venting states, particle beam meshes, and Macbook trackpad click minimum fire thresholds.
-* **[Enemy.js](file:///Users/jerry/Documents/antigravity/beautiful-bell/src/game/Enemy.js):** Implements ghost states, animations, pathfinding target selections, and ectoplasmic projectiles.
-* **[Map.js](file:///Users/jerry/Documents/antigravity/beautiful-bell/src/game/Map.js) & [MapData.js](file:///Users/jerry/Documents/antigravity/beautiful-bell/src/game/MapData.js):** Defines the structural layouts, point lights, teleporter portals, and power pellet spawn coordinate configurations.
-* **[RemotePlayer.js](file:///Users/jerry/Documents/antigravity/beautiful-bell/src/game/RemotePlayer.js):** Visualizes remote players inside your screen using 3D glass-helmet meshes with lerp interpolation.
-* **[NetworkSystem.js](file:///Users/jerry/Documents/antigravity/beautiful-bell/src/game/NetworkSystem.js):** Connects the client to the WebSocket lobby, broadcasting states and downloading player/ghost coordinates.
-* **[ConsoleAIApi.js](file:///Users/jerry/Documents/antigravity/beautiful-bell/src/game/ConsoleAIApi.js):** Binds high-level telemetry/control functions directly to `window.boomAI`.
+---
 
-### Backend Modules (`server.js`)
-* **[server.js](file:///Users/jerry/Documents/antigravity/beautiful-bell/server.js):** Co-hosts the WebSocket signaling lobby and the HTTP REST telemetry endpoints. Allocates client IDs, shifts host authority during disconnects, and manages shared ghost health states.
+## 3. How to Play
+
+1. Open your browser and go to: [http://localhost:3000](http://localhost:3000)
+2. Enter your callsign, click **Initialize System**, and click inside the viewport to lock your cursor.
+3. **Objective**:
+   - Eat all standard floating cookies in the maze to activate the exit teleporter.
+   - Avoid contact with the ghosts (Green Phantasm, Pink Poltergeist, Blue Specter) in **Normal Mode**. Contact will instantly deplete your health and cost you a life.
+   - Eat the blinking **Power Cookies** located at the corners to trigger **Powered-Up Mode**. In this state, the ghosts turn dark blue, run away, and can be consumed for +200 points.
+   - Eat **Cherries** for bonus points (+100 pts) and health recovery.
+   - Walk into the green teleporter portal once activated to advance to the next sector!
+
+### Controls
+
+| Key / Action | Action in Game |
+| :--- | :--- |
+| **`W` / `S`** | Move Forward / Backward |
+| **`A` / `D`** | Rotate View Left / Right (360 degrees keyboard turning) |
+| **`MOUSE`** | Look around (standard first-person camera) |
+| **`LEFT CLICK`** | Trigger rapid biting/chomping animation |
+| **`T`** | Toggle crosshair target sight on/off |
+| **`ESC`** | Pause the game and release mouse cursor |
 
 ---
 
-## 4. Script Utility Directory
+## 4. Game Settings
 
-| Script Name | Purpose | Execution Command |
+| Setting | Default Value | Description |
 | :--- | :--- | :--- |
-| **`start.sh`** | Parallel startup script for Vite (3000) and Lobby servers (8080/8001). | `./start.sh` or `npm start` |
-| **`stop.sh`** | Port scan killer to shut down dev instances and release ports. | `./stop.sh` or `npm run stop` |
-| **`ai_agent.py`** | Standalone Python client that navigates autonomously to capture ghosts. | `python3 py_ai_client/ai_agent.py` |
-| **`companion_agent.py`** | Guardian bot that tracks your position and defends you from nearby ghosts. | `python3 py_ai_client/companion_agent.py` |
-| **`ollama_agent.py`** | local LLM controller using natural-language prompt reasoning via Ollama. | `python3 py_ai_client/ollama_agent.py` |
-| **`zoom_env.py`** | Custom Gymnasium RL wrapper for training agents. | (Imported in python scripts) |
-| **`train_rl.py`** | Gymnasium agent rollout simulation and DQN training wrapper. | `python3 py_ai_client/train_rl.py` |
+| **Starting Lives** | `3` | Number of attempts before triggering Game Over. |
+| **Power-Up Duration** | `10.0 seconds` | Time Crunch-Man remains powered up after eating a Power Cookie. |
+| **Flee Warning Threshold** | `3.0 seconds` | Frightened ghosts flash white/blue during the last 3 seconds of a power-up. |
+| **Ghost Respawn Timer** | `5.0 seconds` | Cooldown time before an eaten ghost respawns at its spawn coordinate. |
+| **Player Move Speed** | `6.0 units/sec` | Standard movement velocity. |
+| **Keyboard Turn Speed** | `3.2 rad/sec` | Rotation rate when holding the `A` or `D` keys. |
+| **Chomp Frequency** | `12.0Hz` (walk) / `24.0Hz` (click) | Animation speed of the yellow hemispheres biting. |
+| **Score System** | Cookie: `+10` / Power Cookie: `+50` / Cherry: `+100` / Ghost: `+200` | Points awarded upon consumption. |
+| **Cookie Colors** | Random | Pellets spawn in randomized neon colors (yellow, pink, green, cyan, orange, purple, red) in both 3D and on the 2D minimap. |
 
 ---
 
-## 5. Troubleshooting Guide
+## 5. Component Directory (`src/game/`)
 
-### Issue: "Address already in use" (EADDRINUSE)
-If you get port collision errors on startup, it means some background node or vite instances were left running:
-* **Solution:** Run `./stop.sh` or `npm run stop` to sweep and clear ports `3000`, `8080`, and `8001`.
-
-### Issue: "AI bots are standing still at spawn"
-If AI bots connect but stay stuck in place:
-* **Solution:** Make sure you have refreshed your browser tab and clicked **INITIALIZE SYSTEM** first. The human host player must connect first to upload the active level's ghost coords to the server.
-
-### Issue: "Mac trackpad clicks don't register visible beams"
-Trackpads trigger rapid mouse events, causing normal weapon triggers to instantly cut off.
-* **Solution:** The codebase implements a 250ms minimum firing duration lock. Ensure you have not modified `Weapon.js` minimum tick registers.
-
-### Issue: "Web Audio is blocked or there is no sound"
-Modern browsers block audio contexts until a direct user gesture occurs.
-* **Solution:** Sound will engage as soon as you click **INITIALIZE SYSTEM** and click inside the screen to lock your mouse pointer.
+* **[GameEngine.js](file:///Users/jerry/Documents/antigravity/rooms/src/game/GameEngine.js):** Runs the rendering, level loaders, and the pixelated 2D canvas minimap (`updateMazeHUD()`).
+* **[Player.js](file:///Users/jerry/Documents/antigravity/rooms/src/game/Player.js):** Tracks score, lives, power-up state timers, and handles collision checks for cookie eating.
+* **[Weapon.js](file:///Users/jerry/Documents/antigravity/rooms/src/game/Weapon.js):** Renders the 3D spherical yellow Crunch-Man jaws, chomp rotation matrices, and smooth visual look-rotation offsets.
+* **[Enemy.js](file:///Users/jerry/Documents/antigravity/rooms/src/game/Enemy.js):** Renders procedural normal and blue/white frightened sprites, controls normal chase vs vulnerable flee AI, and handles eaten states.
+* **[Map.js](file:///Users/jerry/Documents/antigravity/rooms/src/game/Map.js) & [MapData.js](file:///Users/jerry/Documents/antigravity/rooms/src/game/MapData.js):** Defines level grids and handles mesh generation for random colored cookies, power pellets, and cherries.
+* **[AudioSystem.js](file:///Users/jerry/Documents/antigravity/rooms/src/game/AudioSystem.js):** Synthesizes retro sound waves including alternating waka chomps, arpeggio chimes, and a speed-modulating siren.
