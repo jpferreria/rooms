@@ -166,6 +166,25 @@ export class NetworkSystem {
             this.engine.showFloatingText("TELEPORTER LINK SECURED", "go-green");
             this.engine.audio.playPickupSound(true);
             break;
+
+          case 'cookieEaten':
+            const idx = data.cookieIndex;
+            if (this.engine.map.cookies[idx]) {
+              const cookie = this.engine.map.cookies[idx];
+              if (!cookie.eaten) {
+                cookie.eaten = true;
+                this.engine.scene.remove(cookie.mesh);
+                
+                // Check level clear
+                const remaining = this.engine.map.cookies.filter(c => !c.eaten).length;
+                if (remaining === 0) {
+                  this.engine.map.setTeleporterActive(true);
+                  this.engine.audio.playPickupSound(true);
+                  this.engine.showFloatingText("TELEPORTER LINK SECURED", "go-green");
+                }
+              }
+            }
+            break;
         }
       } catch (e) {
         console.error('[Zoom Network] Error processing packet:', e);
@@ -291,6 +310,21 @@ export class NetworkSystem {
         }
       }
     });
+  sendCookieEaten(index) {
+    if (this.isConnected) {
+      this.socket.send(JSON.stringify({
+        type: 'eatCookie',
+        cookieIndex: index
+      }));
+    }
+  }
+
+  sendRequestNextLevel() {
+    if (this.isConnected) {
+      this.socket.send(JSON.stringify({
+        type: 'requestNextLevel'
+      }));
+    }
   }
 
   onConnectionFailed() {

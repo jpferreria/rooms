@@ -209,6 +209,29 @@ wss.on('connection', (ws) => {
             }
           }
           break;
+
+        case 'eatCookie':
+          // Relay eaten cookie index to all other lobby clients
+          broadcast({
+            type: 'cookieEaten',
+            cookieIndex: data.cookieIndex
+          }, playerId);
+          break;
+
+        case 'requestNextLevel':
+          // Loop through the 3 sectors
+          currentLevelIndex = (currentLevelIndex + 1) % 3;
+          ghosts = [];
+          sectorCleared = false;
+          console.log(`[Zoom Server] Sector advanced to Sector ${currentLevelIndex + 1} by player ${playerId}`);
+          
+          // Broadcast syncLevel to all players to transition them together
+          broadcast({
+            type: 'syncLevel',
+            levelIndex: currentLevelIndex,
+            ghosts: []
+          });
+          break;
       }
     } catch (e) {
       console.error('[Zoom Server] Error processing message:', e);

@@ -262,6 +262,11 @@ export class Player {
         cookie.eaten = true;
         this.map.scene.remove(cookie.mesh);
 
+        // Notify network of cookie consumption
+        if (this.engine && this.engine.network.isConnected) {
+          this.engine.network.sendCookieEaten(this.map.cookies.indexOf(cookie));
+        }
+
         // Chomp!
         this.audio.playChompSound(this.chompToggle);
         this.chompToggle = !this.chompToggle;

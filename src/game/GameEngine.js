@@ -264,9 +264,8 @@ export class GameEngine {
       const dist = this.player.position.distanceTo(new THREE.Vector3(this.map.teleporter.pos.x, this.player.position.y, this.map.teleporter.pos.y));
       if (dist < 1.0) {
         if (this.network.isConnected) {
-          if (this.network.isHost) {
-            this.levelUp(); // Host advances and broadcasts level init
-          }
+          // Send request to server so any player can advance the sector lobby-wide
+          this.network.sendRequestNextLevel();
         } else {
           this.levelUp(); // Offline single-player progression
         }
