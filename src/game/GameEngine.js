@@ -393,7 +393,7 @@ export class GameEngine {
       ctx.fill();
     });
 
-    // 3. Draw Power Cookies (flashing orange)
+    // 3. Draw Power Cookies (flashing green)
     this.map.powerCookies.forEach(pc => {
       if (pc.eaten) return;
       
@@ -403,7 +403,7 @@ export class GameEngine {
       // Pulse circle radius
       const pulse = 3.0 + Math.abs(Math.sin(this.elapsedTime * 8)) * 1.5;
       
-      ctx.fillStyle = '#f97316';
+      ctx.fillStyle = '#00ff66';
       ctx.beginPath();
       ctx.arc(px, py, pulse, 0, Math.PI * 2);
       ctx.fill();

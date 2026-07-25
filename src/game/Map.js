@@ -264,13 +264,13 @@ export class Map {
   spawnPowerCookie(x, z, gridX, gridZ) {
     // Larger pulsing power cookie
     const geo = new THREE.SphereGeometry(0.24, 12, 12);
-    const mat = new THREE.MeshBasicMaterial({ color: 0xffaa00 });
+    const mat = new THREE.MeshBasicMaterial({ color: 0x00ff66 });
     const mesh = new THREE.Mesh(geo, mat);
     mesh.position.set(x, 0.7, z);
     this.scene.add(mesh);
 
-    // Add glowing orange light
-    const light = new THREE.PointLight(0xffaa00, 2.0, 3.5);
+    // Add glowing green light
+    const light = new THREE.PointLight(0x00ff66, 2.0, 3.5);
     light.position.copy(mesh.position);
     this.scene.add(light);
 
