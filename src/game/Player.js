@@ -65,6 +65,18 @@ export class Player {
         }
       }
 
+      // Toggle audio mute with 'M' key
+      if (document.pointerLockElement && e.key && e.key.toLowerCase() === 'm') {
+        if (this.audio) {
+          const isMuted = this.audio.toggleMute();
+          if (this.engine) {
+            const statusStr = isMuted ? "MUTED" : "UNMUTED";
+            const colorClass = isMuted ? "go-red" : "go-green";
+            this.engine.showFloatingText(`SOUND ${statusStr}`, colorClass);
+          }
+        }
+      }
+
       this.handleKey(e, true);
     });
     window.addEventListener('keyup', (e) => {

@@ -24,6 +24,15 @@ export class AudioSystem {
     }
   }
 
+  toggleMute() {
+    this.isMuted = !this.isMuted;
+    if (this.ambientDrone && this.ctx) {
+      const targetGain = this.isMuted ? 0 : 0.08;
+      this.ambientDrone.gain.gain.setTargetAtTime(targetGain, this.ctx.currentTime, 0.1);
+    }
+    return this.isMuted;
+  }
+
   createAmbientDrone() {
     if (!this.ctx) return;
 
@@ -45,7 +54,8 @@ export class AudioSystem {
     lfo.connect(lfoGain);
     lfoGain.connect(osc.frequency);
 
-    gain.gain.setValueAtTime(0.08, this.ctx.currentTime); // Clear background drone volume
+    const initGain = this.isMuted ? 0 : 0.08;
+    gain.gain.setValueAtTime(initGain, this.ctx.currentTime); // Clear background drone volume
 
     osc.connect(gain);
     gain.connect(this.ctx.destination);
@@ -57,7 +67,7 @@ export class AudioSystem {
   }
 
   updateSirenSpeed(remaining, total) {
-    if (!this.ambientDrone || !this.ctx) return;
+    if (!this.ambientDrone || !this.ctx || this.isMuted) return;
     this.resume();
 
     const eaten = total - remaining;
@@ -72,7 +82,7 @@ export class AudioSystem {
   }
 
   playChompSound(alternate) {
-    if (!this.ctx) return;
+    if (!this.ctx || this.isMuted) return;
     this.resume();
 
     const osc = this.ctx.createOscillator();
@@ -98,7 +108,7 @@ export class AudioSystem {
   }
 
   playPowerUpSound() {
-    if (!this.ctx) return;
+    if (!this.ctx || this.isMuted) return;
     this.resume();
 
     const osc = this.ctx.createOscillator();
@@ -126,7 +136,7 @@ export class AudioSystem {
   }
 
   playGhostEatenSound() {
-    if (!this.ctx) return;
+    if (!this.ctx || this.isMuted) return;
     this.resume();
 
     const osc = this.ctx.createOscillator();
@@ -149,7 +159,7 @@ export class AudioSystem {
   }
 
   playPlayerDeathSound() {
-    if (!this.ctx) return;
+    if (!this.ctx || this.isMuted) return;
     this.resume();
 
     const osc = this.ctx.createOscillator();
@@ -172,7 +182,7 @@ export class AudioSystem {
   }
 
   playGhostScreech(relativeDistance = 1.0) {
-    if (!this.ctx) return;
+    if (!this.ctx || this.isMuted) return;
     this.resume();
 
     const volume = Math.max(0, 0.15 * (1.0 - relativeDistance));
@@ -196,7 +206,7 @@ export class AudioSystem {
   }
 
   playPickupSound(isShield = false) {
-    if (!this.ctx) return;
+    if (!this.ctx || this.isMuted) return;
     this.resume();
 
     const osc = this.ctx.createOscillator();
@@ -220,7 +230,7 @@ export class AudioSystem {
   }
 
   playTeleportSound() {
-    if (!this.ctx) return;
+    if (!this.ctx || this.isMuted) return;
     this.resume();
 
     const osc = this.ctx.createOscillator();
