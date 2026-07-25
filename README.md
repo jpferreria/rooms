@@ -67,6 +67,7 @@ node tests/game.test.js
 | **`MOUSE`** | Look around (standard first-person camera) |
 | **`LEFT CLICK`** | Trigger rapid biting/chomping animation |
 | **`T`** | Toggle crosshair target sight on/off |
+| **`M`** | Toggle audio sound effects mute/unmute |
 | **`ESC`** | Pause the game and release mouse cursor |
 
 ---
