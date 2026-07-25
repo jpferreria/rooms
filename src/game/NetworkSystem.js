@@ -310,6 +310,8 @@ export class NetworkSystem {
         }
       }
     });
+  }
+
   sendCookieEaten(index) {
     if (this.isConnected) {
       this.socket.send(JSON.stringify({

@@ -97,6 +97,7 @@ import { Player } from '../src/game/Player.js';
 import { Enemy } from '../src/game/Enemy.js';
 import { AudioSystem } from '../src/game/AudioSystem.js';
 import { Map } from '../src/game/Map.js';
+import { NetworkSystem } from '../src/game/NetworkSystem.js';
 
 // Setup Mock Level Map (longer path to allow X-axis movement checks)
 const mockLevelData = {
